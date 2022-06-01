@@ -38,7 +38,7 @@ int main(int argc, char *argv[])
             printf("The domain %s has the following address: %s\n",domain,inet_ntoa(*ip_addr));
         }
     }
-    printf("Exitting...\n");
+    printf("Exiting...\n");
     return(0);
 
     // while(1)
@@ -68,7 +68,7 @@ int main(int argc, char *argv[])
     // scanf("%d",&boolean);
     // if(boolean != 1)
     // {
-    //     printf("Exitting...\n");
+    //     printf("Exiting...\n");
     //     break;
     // }
     // else
