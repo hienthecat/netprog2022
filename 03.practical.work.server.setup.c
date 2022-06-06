@@ -5,11 +5,13 @@
 #include <arpa/inet.h>
 #include <string.h>
 
+#define PORT 8784
+
 int main()
 {
     int sockfd, clen, clientfd;
     struct sockaddr_in saddr, caddr;
-    unsigned short port = 8784;
+    unsigned short port = PORT;
     if ((sockfd = socket(AF_INET, SOCK_STREAM, 0)) < 0)
     {
         printf("Failed to create socket!\n");
