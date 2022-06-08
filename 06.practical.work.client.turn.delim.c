@@ -14,7 +14,7 @@ int main(int argc, char **argv)
     int exit = 1;
     struct sockaddr_in saddr, caddr;
     unsigned short port = PORT;
-    char domain[MAX_LENGTH] = "hienserver.freeddns.org";
+    char domain[MAX_LENGTH];
     char ip_addr[32];
     char send_buffer[BUFFER_SIZE];
     char recv_buffer[BUFFER_SIZE];
@@ -25,19 +25,19 @@ int main(int argc, char **argv)
     }
     else
     {
-        // printf("Please enter a domain name: ");
-        // fgets(domain, MAX_LENGTH, stdin);
-        // domain[strlen(domain) - 1] = '\0';
+        printf("Please enter a domain name: ");
+        fgets(domain, MAX_LENGTH, stdin);
+        domain[strlen(domain) - 1] = '\0';
     }
     hostInfo = gethostbyname(domain);
     if (hostInfo == NULL)
     {
-        perror("Host not found!");
+        perror("Host not found");
         return 1;
     }
     if ((sockfd = socket(AF_INET, SOCK_STREAM, 0)) < 0)
     {
-        perror("Failed to create socket!");
+        perror("Failed to create socket");
         return 1;
     }
     memset(&saddr, 0, sizeof(saddr));
@@ -47,7 +47,7 @@ int main(int argc, char **argv)
     memcpy((char *)&saddr.sin_addr.s_addr, hostInfo->h_addr_list[0], hostInfo->h_length);
     if (connect(sockfd, (struct sockaddr *)&saddr, sizeof(saddr)) < 0)
     {
-        perror("Connection error!");
+        perror("Connection error");
         return 1;
     }
     printf("Connected to %s\n", inet_ntop(hostInfo->h_addrtype, hostInfo->h_addr_list[0], ip_addr, sizeof(ip_addr)));
@@ -60,7 +60,7 @@ int main(int argc, char **argv)
         fflush(stdout);
         fflush(stdin);
         //printf("send %s", send_buffer);
-        printf("Enter a message: ");
+        printf("Enter your message: ");
         do
         {
             fgets(send_buffer, BUFFER_SIZE, stdin);
@@ -70,6 +70,8 @@ int main(int argc, char **argv)
             {
                 printf("Exiting...\n");
                 exit = 0;
+                fflush(stdout);
+                fflush(stdin);
                 break;
             }
             send(sockfd,send_buffer,strlen(send_buffer) + 1,0);
@@ -88,12 +90,12 @@ int main(int argc, char **argv)
                 printf("Server closed connection!\n");
                 exit = 0;
                 break;
-            };
+            }
             printf("Response: %s",recv_buffer);
         //printf("recv %s \n", recv_buffer);
         } while(recv_buffer[strlen(recv_buffer) - 1] != '\n');
         fflush(stdout);
         fflush(stdin);
     }
-    return(0);
+    return 0;
 }
