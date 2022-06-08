@@ -11,6 +11,7 @@
 int main()
 {
     int sockfd, clen, clientfd;
+    int exit=1;
     char send_buffer[BUFFER_SIZE];
     char recv_buffer[BUFFER_SIZE];
     struct sockaddr_in saddr, caddr;
@@ -51,24 +52,43 @@ int main()
     printf("You are now chatting with %s\n", inet_ntoa(caddr.sin_addr));
     memset(send_buffer, 0, BUFFER_SIZE);
     memset(recv_buffer, 0, BUFFER_SIZE);
-    while(1)
+    while(exit)
     {
         fflush(stdout);
         fflush(stdin);
         memset(recv_buffer, 0, sizeof(recv_buffer));
         printf("Waiting for response from client...\n");
-        recv(clientfd, recv_buffer, BUFFER_SIZE, 0);
-        printf("Response: %s \n", recv_buffer);
-        printf("Enter your message: "); 
-        fgets(send_buffer, BUFFER_SIZE, stdin);
-        send_buffer[strlen(send_buffer) - 1] = '\0';
-        // printf("%s", send_buffer);
-        if(strcmp(send_buffer,"/exit")==0)
+        do
         {
-            printf("Exiting...\n");
+            if(recv(clientfd, recv_buffer, BUFFER_SIZE, 0) == 0) {
+                printf("Client disconnected!\n");
+                exit=0;
+                break;
+            }
+            printf("Response: %s", recv_buffer);
+        } while(recv_buffer[strlen(recv_buffer) - 1] != '\n');
+        
+        if(exit==0)
+        {
             break;
         }
-        send(clientfd, send_buffer, strlen(send_buffer), 0);
+        printf("Enter your message: "); 
+        do
+        {
+            fgets(send_buffer, BUFFER_SIZE, stdin);
+            //send_buffer[strlen(send_buffer) - 1] = '\0';
+            printf("send: %s", send_buffer);
+            if(strcmp(send_buffer,"/exit\n")==0)
+            {
+                printf("Exiting...\n");
+                exit = 0;
+                break;
+            }
+            else
+            {
+                send(clientfd,send_buffer,strlen(send_buffer) + 1,0);
+            }
+        } while(send_buffer[strlen(send_buffer) - 1] != '\n');
         memset(send_buffer, 0, sizeof(send_buffer));
         fflush(stdout);
         fflush(stdin);
