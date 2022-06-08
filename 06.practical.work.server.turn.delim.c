@@ -62,7 +62,9 @@ int main()
         {
             if(recv(clientfd, recv_buffer, BUFFER_SIZE, 0) == 0) {
                 printf("Client disconnected!\n");
-                exit=0;
+                exit = 0;
+                fflush(stdout);
+                fflush(stdin);
                 break;
             }
             printf("Response: %s", recv_buffer);
@@ -77,17 +79,14 @@ int main()
         {
             fgets(send_buffer, BUFFER_SIZE, stdin);
             //send_buffer[strlen(send_buffer) - 1] = '\0';
-            printf("send: %s", send_buffer);
+            //printf("send: %s", send_buffer);
             if(strcmp(send_buffer,"/exit\n")==0)
             {
                 printf("Exiting...\n");
                 exit = 0;
                 break;
             }
-            else
-            {
-                send(clientfd,send_buffer,strlen(send_buffer) + 1,0);
-            }
+            send(clientfd,send_buffer,strlen(send_buffer) + 1,0);
         } while(send_buffer[strlen(send_buffer) - 1] != '\n');
         memset(send_buffer, 0, sizeof(send_buffer));
         fflush(stdout);
